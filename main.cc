@@ -20,7 +20,6 @@
 //
 // For more information, please refer to <http://unlicense.org/>
 
-#include <iostream>
 #include <stddef.h>
 #include <stdlib.h>
 #include <string.h>
@@ -109,7 +108,7 @@ static void get_file_list_nostl(const char *root, FileName *strings)
     string_builder_push(&pattern, "\\");
     string_builder_push(&pattern, find_data.cFileName);
 
-    FileName *file = (FileName *)malloc(sizeof(FileName) + (pattern.used) * sizeof(char));
+    auto *file = (FileName *)malloc(sizeof(FileName) + (pattern.used) * sizeof(char));
     file->length = pattern.used;
     file->next = NULL;
     memcpy(file->name, pattern.buffer, pattern.used + 1);
@@ -158,7 +157,7 @@ static void *linear_arena_push_size(LinearArena *arena, size_t size)
     // @note: Assuming page size is 4 KB.
     const size_t page_aligned_size = NEXT_MULTIPLE(aligned_size, 4096);
     // @note: Committing pages is rather expensive. This is the most important piece of logic, when
-    // it comes to performance. This number needs to be set just right for optimal performence, we
+    // it comes to performance. This number needs to be set just right for optimal performance, we
     // don't want to commit too often, but also want to minimize the commit size.
     const size_t commit_size = CLAMP_TOP(arena->committed + MAX(page_aligned_size, 100 * 4096), arena->reserved);
     if (VirtualAlloc(arena->base, commit_size, MEM_COMMIT, PAGE_READWRITE) == NULL) {
@@ -191,7 +190,7 @@ static void get_file_list_custom(const char *root, LinearArena *arena, FileName 
     string_builder_push(&pattern, "\\");
     string_builder_push(&pattern, find_data.cFileName);
 
-    FileName *file = (FileName *)linear_arena_push_size(arena, sizeof(FileName) + (pattern.used) * sizeof(char));
+    auto *file = (FileName *)linear_arena_push_size(arena, sizeof(FileName) + (pattern.used) * sizeof(char));
     file->length = pattern.used;
     file->next = NULL;
     memcpy(file->name, pattern.buffer, pattern.used + 1);
@@ -238,7 +237,7 @@ int main()
   }
 
   {
-    FileName *first = (FileName *)malloc(sizeof(FileName) + sizeof(char));
+    auto *first = (FileName *)malloc(sizeof(FileName) + sizeof(char));
     first->length = 1;
     first->next = NULL;
     memcpy(first->name, ".", 2 * sizeof(char));
@@ -270,7 +269,7 @@ int main()
     LinearArena arena;
     linear_arena_create(&arena, 1024 * 1024 * 1024);
 
-    FileName *first = (FileName *)linear_arena_push_size(&arena, sizeof(FileName) + sizeof(char));
+    auto *first = (FileName *)linear_arena_push_size(&arena, sizeof(FileName) + sizeof(char));
     first->length = 1;
     first->next = NULL;
     memcpy(first->name, ".", 2 * sizeof(char));
