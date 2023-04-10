@@ -10,6 +10,8 @@ There are three different implementations:
 - Non-STL version: using only `malloc`, a custom string builder and storing file names as a linked list
 - Custom allocator version: the same as the non-STL version, but using a custom linear allocator
 
+The implementations recursively iterate over all files and directories inside of the current directory, saving all file names into memory.
+
 ## Results
 
 Running this program inside the Mozilla source code repository (changeset `66e3220110ba0dd99ba7d45684ac4731886a59a9`):
