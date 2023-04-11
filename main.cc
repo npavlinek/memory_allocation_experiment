@@ -29,8 +29,6 @@
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
 
-#define MAX_STRING_LENGTH 260
-
 //
 // STL version
 //
@@ -38,7 +36,7 @@
 static void get_file_list_stl(const std::string &root, std::vector<std::string> &strings)
 {
   std::string pattern;
-  pattern.reserve(MAX_STRING_LENGTH);
+  pattern.reserve(MAX_PATH);
   pattern.append(root);
   pattern.append("\\*");
 
@@ -67,14 +65,14 @@ static void get_file_list_stl(const std::string &root, std::vector<std::string> 
 //
 
 struct StringBuilder {
-  char buffer[MAX_STRING_LENGTH];
+  char buffer[MAX_PATH];
   size_t used;
 };
 
 static void string_builder_push(StringBuilder *builder, const char *string)
 {
   const size_t string_length = strlen(string);
-  if ((string_length + 1) >= MAX_STRING_LENGTH) {
+  if ((string_length + 1) >= MAX_PATH) {
     fprintf(stderr, "error: no more space left\n");
     exit(EXIT_FAILURE);
   }
