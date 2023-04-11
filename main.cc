@@ -1,24 +1,26 @@
-// Copyright (C) 2023 Niko Pavlinek
-//
-// This is free and unencumbered software released into the public domain.
-//
-// Anyone is free to copy, modify, publish, use, compile, sell, or distribute this software, either
-// in source code form or as a compiled binary, for any purpose, commercial or non-commercial, and
-// by any means.
-//
-// In jurisdictions that recognize copyright laws, the author or authors of this software dedicate
-// any and all copyright interest in the software to the public domain. We make this dedication for
-// the benefit of the public at large and to the detriment of our heirs and successors. We intend
-// this dedication to be an overt act of relinquishment in perpetuity of all present and future
-// rights to this software under copyright law.
-//
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT
-// NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
-// NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
-// CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-//
-// For more information, please refer to <http://unlicense.org/>
+/*
+ * Copyright (C) 2023 Niko Pavlinek
+ *
+ * This is free and unencumbered software released into the public domain.
+ *
+ * Anyone is free to copy, modify, publish, use, compile, sell, or distribute this software, either
+ * in source code form or as a compiled binary, for any purpose, commercial or non-commercial, and
+ * by any means.
+ *
+ * In jurisdictions that recognize copyright laws, the author or authors of this software dedicate
+ * any and all copyright interest in the software to the public domain. We make this dedication for
+ * the benefit of the public at large and to the detriment of our heirs and successors. We intend
+ * this dedication to be an overt act of relinquishment in perpetuity of all present and future
+ * rights to this software under copyright law.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT
+ * NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+ * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
+ * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ *
+ * For more information, please refer to <http://unlicense.org/>
+ */
 
 #include <stddef.h>
 #include <stdlib.h>
@@ -29,9 +31,9 @@
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
 
-//
-// STL version
-//
+/* --------------------------------------------------------------------
+ * STL version
+ */
 
 static void get_file_list_stl(const std::string &root, std::vector<std::string> &strings)
 {
@@ -60,9 +62,9 @@ static void get_file_list_stl(const std::string &root, std::vector<std::string> 
   } while (FindNextFileA(find_handle, &find_data));
 }
 
-//
-// No STL version
-//
+/* --------------------------------------------------------------------
+ * No STL version
+ */
 
 struct StringBuilder {
   char buffer[MAX_PATH];
@@ -84,7 +86,7 @@ static void string_builder_push(StringBuilder *builder, const char *string)
 struct FileName {
   size_t length;
   FileName *next;
-  char name[1]; // C++ does not support flexible array members without compiler extensions. Yet another reason why C is better. :)
+  char name[1]; /* C++ does not support flexible array members without compiler extensions. Yet another reason why C is better. :) */
 };
 
 static void get_file_list_nostl(const char *root, FileName *strings)
@@ -121,9 +123,9 @@ static void get_file_list_nostl(const char *root, FileName *strings)
   } while (FindNextFileA(find_handle, &find_data));
 }
 
-//
-// No STL, custom allocator version
-//
+/* --------------------------------------------------------------------
+ * No STL, custom allocator version
+ */
 
 #define CLAMP_TOP(val, max) ((val) > (max) ? (max) : (val))
 #define MAX(a, b) ((a) > (b) ? (a) : (b))
@@ -152,11 +154,11 @@ static void *linear_arena_push_size(LinearArena *arena, size_t size)
 
   const size_t aligned_size = NEXT_MULTIPLE(size, sizeof(void *));
   if ((arena->used + aligned_size) > arena->committed) {
-    // @note: Assuming page size is 4 KB.
+    /* @note: Assuming page size is 4 KB. */
     const size_t page_aligned_size = NEXT_MULTIPLE(aligned_size, 4096);
-    // @note: Committing pages is rather expensive. This is the most important piece of logic, when
-    // it comes to performance. This number needs to be set just right for optimal performance, we
-    // don't want to commit too often, but also want to minimize the commit size.
+    /* @note: Committing pages is rather expensive. This is the most important piece of logic, when
+     * it comes to performance. This number needs to be set just right for optimal performance, we
+     * don't want to commit too often, but also want to minimize the commit size. */
     const size_t commit_size = CLAMP_TOP(arena->committed + MAX(page_aligned_size, 100 * 4096), arena->reserved);
     if (VirtualAlloc(arena->base, commit_size, MEM_COMMIT, PAGE_READWRITE) == NULL) {
       return NULL;
