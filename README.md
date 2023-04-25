@@ -18,7 +18,7 @@ Running this program inside the Mozilla source code repository (changeset `66e32
 
 ```
 STL version took 5.09 s and found 1062892 items
-No STL version took 4.13 s and found 1062892 items
+Non-STL version took 4.13 s and found 1062892 items
 Custom allocator version took 4.09 s and found 1062892 items
 ```
 
