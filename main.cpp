@@ -154,9 +154,9 @@ static void *alloc(LinearArena *arena, size_t size) {
         /* @note: Assuming page size is 4 KB. */
         size_t page_aligned_size = NEXT_MULTIPLE(aligned_size, 4096);
         /* @note: Committing pages is rather expensive. This is the most
-         * important piece of logic, when it comes to performance. This number
-         * needs to be set just right for optimal performance, we don't want to
-         * commit too often, but also want to minimize the commit size. */
+           important piece of logic, when it comes to performance. This number
+           needs to be set just right for optimal performance, we don't want to
+           commit too often, but also want to minimize the commit size. */
         size_t commit_size = CLAMP_TOP(arena->committed + MAX(page_aligned_size, 100 * 4096), arena->reserved);
         if (!VirtualAlloc(arena->base, commit_size, MEM_COMMIT, PAGE_READWRITE)) return NULL;
         arena->committed = commit_size;
