@@ -23,3 +23,7 @@ Custom allocator version took 4.09 s and found 1062892 items
 ```
 
 In this case the custom allocator version is slightly faster, sometimes it is even faster and other times it is slower than the non-STL version. I still see this as a win though. Even if the custom allocator breaks even with `malloc`, it is still a win because of its' simplicity; the custom allocator is 19 lines of code (depending on how you count code), there is no way `malloc` is anywhere close to that.
+
+## License
+
+Zero Clause BSD License, a public domain equivalent license. See the `LICENSE` file for more details.
